@@ -108,7 +108,7 @@ Each meal card includes:
 - Prep time
 - Explanation of why the meal was selected
 
-The system is designed to support Groq-powered AI generation while also providing a local fallback planner if no API key is available.
+The system requires an AI provider for meal generation. If no API key is configured, the backend returns a clear setup error instead of generating rule-based meals.
 
 ---
 
@@ -462,23 +462,33 @@ http://127.0.0.1:8000
 
 ---
 
-## Optional Groq API Setup
+## Google Gemini API Setup
 
-NutriGraph AI can run without an API key using the local fallback planner.
+NutriGraph AI is configured for AI-only meal generation. Set a Google Gemini API key before generating meal plans.
 
-To enable Groq-powered AI generation, set your API key:
+To keep token usage low, the backend sends a compact profile and asks Gemini for concise structured JSON only.
+
+Set your API key:
 
 ### Windows PowerShell
 
 ```powershell
-$env:GROQ_API_KEY="your_api_key_here"
+$env:GOOGLE_API_KEY="your_api_key_here"
+$env:NUTRIGRAPH_AI_PROVIDER="google"
+$env:GEMINI_MODEL="gemini-2.5-flash-lite"
+$env:GEMINI_MAX_OUTPUT_TOKENS="1200"
 ```
 
 ### macOS / Linux
 
 ```bash
-export GROQ_API_KEY="your_api_key_here"
+export GOOGLE_API_KEY="your_api_key_here"
+export NUTRIGRAPH_AI_PROVIDER="google"
+export GEMINI_MODEL="gemini-2.5-flash-lite"
+export GEMINI_MAX_OUTPUT_TOKENS="1200"
 ```
+
+The `GEMINI_MAX_OUTPUT_TOKENS` value keeps each response bounded. Lower it for fewer meals or shorter JSON; increase it if the provider returns incomplete JSON.
 
 You can also create a `.env` file if your deployment setup supports it.
 

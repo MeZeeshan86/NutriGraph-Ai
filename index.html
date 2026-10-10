@@ -1,299 +1,311 @@
 <!doctype html>
-<html lang="en" class="light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NutriGraph AI - Personalized Nutrition Planner</title>
+    <title>NutriGraph AI</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Syne:wght@600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css?v=2" />
+    <link rel="stylesheet" href="/style.css" />
   </head>
   <body>
     <header class="site-header">
       <div class="container header-inner">
-        <a href="#profile" class="logo" aria-label="NutriGraph AI home">
+        <a class="logo" href="#profile">
           <span class="logo-icon"><span class="msymbol">nutrition</span></span>
           <span class="logo-text">NutriGraph <span>AI</span></span>
         </a>
         <nav class="main-nav" aria-label="Primary navigation">
           <a href="#profile">Profile</a>
-          <a href="#meal-plan">Plan</a>
+          <a href="#plan-results">Plan</a>
           <a href="#analytics">Analysis</a>
-          <a href="#grocery">Grocery</a>
         </nav>
-        <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle dark mode">
-          <span class="msymbol" id="theme-icon">dark_mode</span>
-        </button>
       </div>
     </header>
 
-    <main class="container main-content">
+    <main id="app" class="container main-content">
       <section class="hero">
         <div class="hero-copy">
-          <span class="hero-badge"><span class="msymbol">verified</span> Explainable meal planning</span>
+          <span class="hero-badge">
+            <span class="msymbol">auto_awesome</span>
+            AI-only meal generation
+          </span>
           <h1>NutriGraph AI</h1>
           <p>
-            Build a safer meal plan with macro targets, micronutrient analysis,
-            grocery lists, recipe details, and clear reasons behind every recommendation.
+            Create personalized meal plans using Gemini through the FastAPI
+            backend. No local rule-based meal generation is used.
           </p>
           <div class="hero-actions">
-            <button id="hero-cta" class="btn-primary" type="button">
-              Start Profile <span class="msymbol">arrow_forward</span>
-            </button>
-            <a class="btn-ghost" href="#analytics">View Analysis</a>
+            <a class="btn-primary" href="#profile">Start profile</a>
+            <a class="btn-ghost" href="#plan-results">View results</a>
           </div>
         </div>
-        <div class="hero-panel" aria-label="Nutrition score preview">
-          <div>
-            <span class="panel-label">Daily Target</span>
-            <strong id="hero-kcal">--</strong>
-            <span>kcal</span>
-          </div>
-          <div class="score-ring">
-            <span id="hero-score">--</span>
-            <small>score</small>
-          </div>
+        <div class="hero-panel">
+          <span class="panel-label">AI meals</span>
+          <strong id="meal-count">0</strong>
+          <span>generated</span>
         </div>
-      </section>
-
-      <section class="journey" aria-label="Planning stages">
-        <div class="journey-step active"><span class="msymbol">person</span><span>Profile</span></div>
-        <div class="journey-step"><span class="msymbol">restaurant_menu</span><span>Meal Plan</span></div>
-        <div class="journey-step"><span class="msymbol">monitoring</span><span>Nutrients</span></div>
-        <div class="journey-step"><span class="msymbol">shopping_bag</span><span>Grocery</span></div>
       </section>
 
       <section id="profile" class="workspace-grid">
-        <form id="profile-form" class="card profile-card">
+        <form class="card profile-card" onsubmit="return false;">
           <div class="section-kicker">Health intake</div>
-          <h2>Tell the planner what actually matters.</h2>
+          <h2>Profile</h2>
+
           <div class="form-grid">
             <label class="field">
               <span>Age</span>
-              <input name="age" type="number" min="12" max="100" value="28" required />
+              <input
+                id="age"
+                name="age"
+                type="number"
+                min="12"
+                max="100"
+                value="22"
+              />
             </label>
+
             <label class="field">
-              <span>Gender for BMR estimate</span>
-              <select name="gender">
-                <option value="neutral">Neutral estimate</option>
+              <span>Gender</span>
+              <select id="gender" name="gender">
+                <option value="neutral">Neutral</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
             </label>
+
             <label class="field">
               <span>Height (cm)</span>
-              <input name="height_cm" type="number" min="120" max="230" value="172" required />
+              <input
+                id="height_cm"
+                name="height_cm"
+                type="number"
+                value="172"
+              />
             </label>
+
             <label class="field">
               <span>Weight (kg)</span>
-              <input name="weight_kg" type="number" min="35" max="220" value="70" required />
+              <input id="weight_kg" name="weight_kg" type="number" value="70" />
             </label>
+
             <label class="field">
               <span>Activity</span>
-              <select name="activity_level">
+              <select id="activity_level" name="activity_level">
                 <option value="sedentary">Sedentary</option>
                 <option value="light">Light</option>
                 <option value="moderate" selected>Moderate</option>
                 <option value="active">Active</option>
               </select>
             </label>
+
             <label class="field">
               <span>Goal</span>
-              <select name="health_goal">
+              <select id="goal" name="health_goal">
                 <option value="weight_loss">Weight loss</option>
-                <option value="maintenance" selected>Maintenance</option>
-                <option value="muscle_gain">Muscle gain</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="muscle_gain" selected>Muscle gain</option>
               </select>
             </label>
+
             <label class="field">
               <span>Diet</span>
-              <select name="diet_preference">
+              <select id="diet-type" name="diet_preference">
                 <option value="non-vegetarian">Non-vegetarian</option>
-                <option value="vegetarian">Vegetarian</option>
+                <option value="vegetarian" selected>Vegetarian</option>
                 <option value="vegan">Vegan</option>
                 <option value="jain">Jain vegetarian</option>
               </select>
             </label>
+
             <label class="field">
               <span>Cuisine</span>
-              <select name="cuisine">
-                <option value="indian" selected>Indian home meals</option>
+              <select id="cuisine" name="cuisine">
+                <option value="indian" selected>Indian</option>
                 <option value="mediterranean">Mediterranean</option>
-                <option value="global">Global mixed</option>
+                <option value="global">Global</option>
               </select>
             </label>
+
             <label class="field">
-              <span>Budget</span>
-              <select name="budget">
-                <option value="student">Student budget</option>
-                <option value="standard" selected>Standard</option>
-                <option value="premium">Premium</option>
+              <span>Meals per day</span>
+              <select id="meal_count" name="meal_count">
+                <option value="3">3</option>
+                <option value="4" selected>4</option>
+                <option value="5">5</option>
               </select>
             </label>
-            <label class="field">
-              <span>Meal count</span>
-              <select name="meal_count">
-                <option value="3">3 meals</option>
-                <option value="4" selected>4 meals</option>
-                <option value="5">5 meals</option>
-              </select>
-            </label>
+
             <label class="field">
               <span>Health focus</span>
-              <select name="condition">
+              <select id="condition" name="condition">
                 <option value="none" selected>General wellness</option>
                 <option value="diabetes">Blood sugar friendly</option>
-                <option value="hypertension">Low sodium focus</option>
+                <option value="hypertension">Low sodium</option>
                 <option value="pcos">PCOS supportive</option>
               </select>
             </label>
+
             <label class="field">
-              <span>Cooking time</span>
-              <select name="time">
-                <option value="quick">Under 20 minutes</option>
-                <option value="normal" selected>20-40 minutes</option>
-                <option value="prep">Meal prep friendly</option>
+              <span>Budget</span>
+              <select id="budget" name="budget">
+                <option value="student" selected>Student</option>
+                <option value="standard">Standard</option>
+                <option value="premium">Premium</option>
               </select>
             </label>
-            <label class="field wide">
-              <span>Allergies or restrictions</span>
-              <input name="allergies" type="text" placeholder="Peanuts, dairy, gluten, soy" />
+
+            <label class="field">
+              <span>Cooking time</span>
+              <select id="time" name="time">
+                <option value="quick">Quick</option>
+                <option value="normal" selected>Normal</option>
+                <option value="prep">Meal prep</option>
+              </select>
             </label>
+
             <label class="field wide">
-              <span>Food dislikes</span>
-              <input name="dislikes" type="text" placeholder="Mushroom, fish, paneer" />
+              <span>Allergies</span>
+              <input
+                id="allergies"
+                name="allergies"
+                placeholder="peanuts, dairy, gluten"
+              />
+            </label>
+
+            <label class="field wide">
+              <span>Disliked foods</span>
+              <input
+                id="dislikes"
+                name="dislikes"
+                placeholder="mushroom, fish, paneer"
+              />
+            </label>
+
+            <label class="field wide">
+              <span>Extra instructions</span>
+              <textarea
+                id="user-instructions"
+                name="additional_notes"
+                rows="4"
+                placeholder="Example: high protein, easy hostel meals, avoid spicy food"
+              ></textarea>
             </label>
           </div>
-          <button id="generate-btn" class="btn-primary full" type="submit">
-            <span class="msymbol">auto_awesome</span> Generate smarter plan
-          </button>
-          <p id="profile-status" class="status-msg" role="status"></p>
+
+          <div class="hero-actions">
+            <button id="save-profile" class="btn-secondary" type="button">
+              Save profile
+            </button>
+            <button id="generate-plan" class="btn-primary" type="button">
+              Generate AI plan
+            </button>
+          </div>
         </form>
 
         <aside class="side-stack">
-          <section class="target-card">
-            <span class="panel-label">Personal target</span>
-            <div class="target-number"><span id="kcal-display">--</span><small>kcal</small></div>
-            <p id="kcal-note">Complete the form to calculate a safer daily range.</p>
-            <div id="macro-mini" class="macro-mini">
-              <span><b id="mini-protein">--</b>Protein</span>
-              <span><b id="mini-carbs">--</b>Carbs</span>
-              <span><b id="mini-fat">--</b>Fat</span>
-            </div>
-          </section>
-
           <section class="card fridge-card">
-            <div class="section-kicker">Use what you have</div>
-            <h3>Ingredient dish generator</h3>
-            <textarea id="ingredients-input" rows="4" placeholder="Eggs, spinach, tomato, quinoa"></textarea>
-            <button id="ingredients-btn" class="btn-secondary full" type="button">Suggest dishes</button>
-            <div id="ingredient-results" class="ingredient-results"></div>
+            <div class="section-kicker">Use ingredients</div>
+            <h3>Ingredient meal ideas</h3>
+            <textarea
+              id="ingredients"
+              rows="5"
+              placeholder="eggs, spinach, tomato, quinoa"
+            ></textarea>
+            <button
+              id="generate-ingredients"
+              class="btn-secondary full"
+              type="button"
+            >
+              Generate from ingredients
+            </button>
           </section>
         </aside>
       </section>
 
-      <section id="meal-plan">
+      <section id="plan-results">
         <div class="section-header">
           <div>
-            <div class="section-kicker">Today</div>
+            <div class="section-kicker">AI result</div>
             <h2>Meal Plan</h2>
-            <p id="today-date"></p>
-          </div>
-          <div id="safety-badge" class="safety-badge hidden">
-            <span class="msymbol">health_and_safety</span>
-            <span>Safety filters active</span>
           </div>
         </div>
-        <div id="meal-grid" class="meal-grid"></div>
+        <div id="meal-grid" class="meal-grid">
+          <div class="ingredient-item">
+            <strong>No meals yet</strong>
+            <p class="muted">Save your profile, then generate an AI plan.</p>
+          </div>
+        </div>
       </section>
 
       <section id="analytics" class="analytics-layout">
-        <div class="card">
-          <div class="section-kicker">Analysis</div>
-          <h2>Nutrient Intelligence</h2>
+        <div class="card analytics-main-card">
+          <div class="section-kicker">NUTRITION OVERVIEW</div>
+          <h2>
+            Daily nutrition <span class="heading-accent">at a glance</span>
+          </h2>
+          <p class="analytics-intro">
+            Estimated energy and macronutrients across your generated meal plan.
+          </p>
+          <div id="nutrition-summary" class="macro-mini"></div>
           <div class="chart-grid">
             <div class="chart-tile">
-              <h3>Calories by meal</h3>
-              <canvas id="calorie-chart"></canvas>
+              <div class="chart-heading">
+                <span class="chart-icon">↗</span>
+                <h3>Calories by meal</h3>
+              </div>
+              <canvas id="calories-chart"></canvas>
             </div>
             <div class="chart-tile">
-              <h3>Macro distribution</h3>
+              <div class="chart-heading">
+                <span class="chart-icon">◔</span>
+                <h3>Macronutrient split</h3>
+              </div>
               <canvas id="macro-chart"></canvas>
             </div>
-            <div class="chart-tile wide-chart">
-              <h3>Micronutrient coverage</h3>
-              <canvas id="micro-chart"></canvas>
-            </div>
-            <div class="chart-tile wide-chart">
-              <h3>Daily quality radar</h3>
-              <canvas id="radar-chart"></canvas>
-            </div>
           </div>
+          <p id="nutrition-disclaimer" class="muted">
+            Nutrition values are AI-generated estimates.
+          </p>
         </div>
 
         <aside class="analysis-stack">
-          <section class="score-card">
-            <span class="panel-label">Plan score</span>
-            <strong id="plan-score">--</strong>
-            <p id="score-note">Generate a plan to see quality scoring.</p>
+          <section class="card">
+            <h3>Micronutrients</h3>
+            <div id="micronutrient-list" class="gap-list"></div>
           </section>
           <section class="card">
-            <h3>Nutrition gaps</h3>
-            <div id="gap-list" class="gap-list">
-              <p class="muted">No analysis yet.</p>
-            </div>
-          </section>
-          <section class="card">
-            <h3>Smart recommendations</h3>
-            <div id="recommendations" class="recommendations">
-              <p class="muted">Recommendations will appear after plan generation.</p>
-            </div>
+            <h3>AI Analysis</h3>
+            <div id="ai-analysis" class="recommendations"></div>
           </section>
         </aside>
       </section>
-
-      <section id="grocery" class="utility-grid">
-        <section class="card">
-          <div class="section-kicker">7-day preview</div>
-          <h2>Weekly Plan</h2>
-          <div id="weekly-plan" class="weekly-plan"></div>
-        </section>
-        <section class="card">
-          <div class="section-kicker">Shopping</div>
-          <h2>Grocery List</h2>
-          <div id="grocery-list" class="grocery-list"></div>
-        </section>
-      </section>
-
-      <section class="disclaimer">
-        NutriGraph AI is an educational planning prototype, not medical advice.
-        People with medical conditions, pregnancy, eating disorders, or prescribed diets
-        should consult a qualified professional before following a meal plan.
-      </section>
     </main>
 
-    <dialog id="recipe-dialog" class="recipe-dialog">
+    <dialog id="recipe-modal" class="recipe-dialog">
       <div class="dialog-head">
-        <div>
-          <span class="section-kicker">Recipe details</span>
-          <h2 id="dialog-title">Meal</h2>
-        </div>
-        <button id="dialog-close" class="icon-btn" type="button" aria-label="Close recipe">
+        <h2>Recipe</h2>
+        <button
+          id="close-recipe"
+          class="icon-btn"
+          type="button"
+          aria-label="Close"
+        >
           <span class="msymbol">close</span>
         </button>
       </div>
-      <div id="dialog-content"></div>
+      <div id="recipe-content"></div>
     </dialog>
 
-    <script src="app.js?v=2"></script>
+    <script src="/app.js"></script>
   </body>
 </html>
